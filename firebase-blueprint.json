@@ -1,0 +1,39 @@
+{
+  "entities": {
+    "LeaderboardEntry": {
+      "title": "Leaderboard Entry",
+      "description": "A single entry in the game leaderboard",
+      "type": "object",
+      "properties": {
+        "playerName": {
+          "type": "string",
+          "description": "The name of the player"
+        },
+        "score": {
+          "type": "integer",
+          "description": "The score achieved by the player"
+        },
+        "level": {
+          "type": "integer",
+          "description": "The level reached by the player"
+        },
+        "distance": {
+          "type": "number",
+          "description": "The distance traveled by the player"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time the entry was created"
+        }
+      },
+      "required": ["playerName", "score", "level", "distance", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/leaderboard/{entryId}": {
+      "schema": "LeaderboardEntry",
+      "description": "Collection of leaderboard entries"
+    }
+  }
+}

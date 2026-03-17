@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: leaderboard
+    // Document ID: auto-generated
+    // Fields:
+    //   - playerName: string (required, 1-20 chars)
+    //   - score: int (required, positive)
+    //   - level: int (required, positive)
+    //   - distance: number (required, positive)
+    //   - createdAt: timestamp (required)
+    //
+    // ===============================================================
+
+    match /leaderboard/{entryId} {
+      // Allow anyone to read the leaderboard
+      allow read: if true;
+      
+      // Allow anyone to create an entry, but with strict validation
+      allow create: if isValidEntry(request.resource.data);
+      
+      // No updates or deletes allowed for public leaderboard entries
+      allow update, delete: if false;
+    }
+
+    function isValidEntry(data) {
+      return data.keys().hasAll(['playerName', 'score', 'level', 'distance', 'createdAt']) &&
+             data.keys().hasOnly(['playerName', 'score', 'level', 'distance', 'createdAt']) &&
+             data.playerName is string && 
+             data.playerName.size() >= 1 && 
+             data.playerName.size() <= 20 &&
+             data.score is int && 
+             data.score >= 0 &&
+             data.level is int && 
+             data.level >= 1 &&
+             data.distance is number && 
+             data.distance >= 0 &&
+             data.createdAt is timestamp;
+    }
+  }
+}
